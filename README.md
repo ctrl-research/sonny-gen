@@ -1,45 +1,64 @@
-# template
+# sonny-gen
 
-Template repository for `gravityctl` projects.
+A fully **client-side** avatar customizer and generator for collectible figurines. Load or
+generate a 3D figure, rotate it, recolour it, add accessories, pick a background, and export
+the result as an image, a 3D model, or a shareable preset — all in the browser, no backend.
 
-## What's Included
+**Live demo:** <https://ctrl-research.github.io/sonny-gen/> (deployed from `main` via GitHub Actions)
 
-- **Renovate** — automated dependency updates for Docker, Go modules, and GitHub Actions
-- **Branch protection** — `main` requires PRs and review
-- **CODEOWNERS** — `@gravityctl/reviewers` auto-requested for review
-- **MIT License**
-- **.gitignore** — common exclusions for OS, IDE, build outputs, and secrets
+## Features
 
-## Using This Template
+- **Procedural base figure** — an original Sonny Angel–style figure generated from geometry,
+  so the app works with zero assets. (Not modelled on any copyrighted likeness.)
+- **Bring your own model** — drag-and-drop a `.glb` / `.gltf` to customize your own figures.
+- **Colour customization** — editable colour groups (body, blush, eyes, accents).
+- **3D accessories** — swappable headgear (party hat, animal hood, fruit cap, halo) and wings.
+- **Rotation & orbit** — orbit the camera (with optional auto-rotate) plus explicit X/Y/Z
+  figure rotation sliders.
+- **Backgrounds** — solid and gradient presets, lit by an offline (no-CDN) reflection rig.
+- **Exports**
+  - Flattened **PNG** (with the background)
+  - **Transparent PNG** (figure only)
+  - **3D model** as binary **GLB**
+  - **JSON preset** — save/load a full look (also a portable, shareable file)
 
-1. Click **Use this template** to create a new repository
-2. Update `renovate.json` to configure managers and schedules for your project
-3. Enable the new repo in the Renovate GitHub App if using hosted Renovate
+## Tech stack
 
-## Renovate
+React + [react-three-fiber](https://github.com/pmndrs/react-three-fiber) +
+[drei](https://github.com/pmndrs/drei) on Vite/TypeScript, with
+[zustand](https://github.com/pmndrs/zustand) as the single source of truth. The store's state
+is exactly the serializable preset, so UI, 3D scene, and export/import all stay in sync.
 
-Dependency updates are managed via Renovate. Configuration is in `renovate.json` and `.github/renovate-config.js`.
+## Development
 
-Enabled managers:
-- `docker-compose`
-- `github-actions`
-- `gomod`
+```bash
+npm install
+npm run dev        # start the dev server
+npm run build      # typecheck + production build to dist/
+npm run preview    # preview the production build
+npm run lint       # eslint
+npm run typecheck  # tsc --noEmit
+npm test           # vitest
+```
 
-Add or remove managers as needed for your project.
+The production build in `dist/` is fully static and can be hosted anywhere (e.g. GitHub Pages);
+`vite.config.ts` uses a relative `base` so it works from a subpath.
 
-## Files
+## Project structure
 
 ```
-.
-├── .github/
-│   ├── CODEOWNERS           # Auto-request review from @gravityctl/reviewers
-│   ├── renovate-config.js   # Renovate platform config
-│   └── workflows/
-│       └── renovate.yaml    # Renovate GitHub Action workflow
-├── .gitignore
-├── CONTRIBUTING.md
-├── LICENSE
-├── README.md
-├── renovate.json           # Renovate settings
-└── SECURITY.md
+src/
+  state/        # zustand store + presets (colour groups, accessories, backgrounds)
+  scene/        # R3F scene: Stage, procedural Figure, accessories, Background, GLB loader
+  components/   # sidebar UI panels (model, colours, accessories, background, rotation, export)
+  loaders/      # GLB/GLTF file loader hook
+  export/       # PNG, GLB, and JSON preset export/import
+  types.ts      # shared domain types (incl. the serializable CustomizerConfig)
 ```
+
+## Roadmap / not yet included
+
+- Real, rigged/posed source models and pose controls
+- Turntable GIF/WebM and printable card/sticker-sheet exports
+- URL-hash preset sharing
+- Per-mesh texture / decal painting
