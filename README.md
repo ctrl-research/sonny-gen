@@ -4,6 +4,8 @@ A fully **client-side** avatar customizer and generator for collectible figurine
 generate a 3D figure, rotate it, recolour it, add accessories, pick a background, and export
 the result as an image, a 3D model, or a shareable preset — all in the browser, no backend.
 
+**Live demo:** <https://ctrl-research.github.io/sonny-gen/> (deployed from `main` via GitHub Actions)
+
 ## Features
 
 - **Procedural base figure** — an original Sonny Angel–style figure generated from geometry,
